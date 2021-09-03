@@ -1,0 +1,22 @@
+setwd("") #set the working directory
+library(ggplot2)
+inFile <- file.path("") #give the path of the mapping file with gene expression value and corresponding genotype
+jenny <- read.table(inFile, header = T, sep = "\t")
+jenny$Genotype<- as.factor(jenny$Genotype)
+head(jenny)
+# Basic violin plot
+data_summary <- function(x) {
+  m <- mean(x)
+  ymin <- m-sd(x)
+  ymax <- m+sd(x)
+  return(c(y=m,ymin=ymin,ymax=ymax))
+}
+p <- ggplot(jenny, aes(x=Genotype, y=Gene_Expression)) + 
+  geom_violin(trim=FALSE)
+p + scale_x_discrete(limits=c("0", "1","2"))+ stat_summary(fun.y=median, geom="point", size=2, color="red")+ geom_boxplot(width=0.1)+stat_summary(fun.data=mean_sdl,geom="pointrange", color="red")
+p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+p + geom_boxplot(width=0.1)
+p + stat_summary(fun.data=data_summary)
+p + geom_dotplot(binaxis='y', stackdir='center', dotsize=1)
+p + scale_x_discrete(limits=c("0", "1","2"))+geom_jitter(shape=16, position=position_jitter(0.2))
+p + geom_jitter(shape=16, position=position_jitter(0.2))
